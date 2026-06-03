@@ -3,7 +3,7 @@ name: Build and Release Executable
 on:
   push:
     tags:
-      - 'v*'
+      - '*.*.*'
 
 permissions:
   contents: write
