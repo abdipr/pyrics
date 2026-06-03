@@ -108,12 +108,28 @@ class LyricWindow(QWidget):
         invisible_color = self.text_color if self.inverted else self.bg_color
         
         formatted = []
+        has_bg_break = False
         for w in self.words:
+            is_bg = getattr(w, 'is_bg', False)
+            
             if time_ms < w.begin_ms:
-                # Invisible: Color matches background so it occupies space but is hidden
-                formatted.append(f"<span style='color: {invisible_color};'>{w.text}</span>")
+                color_str = invisible_color
             else:
-                # Visible word
-                formatted.append(f"<span style='color: {visible_color};'>{w.text}</span>")
+                if is_bg:
+                    c = QColor(visible_color)
+                    color_str = f"rgba({c.red()}, {c.green()}, {c.blue()}, 178)"
+                else:
+                    color_str = visible_color
+            
+            prefix = ""
+            if is_bg and not has_bg_break:
+                prefix = "<br>"
+                has_bg_break = True
+                
+            style = f"color: {color_str};"
+            if is_bg:
+                style += " font-size: 70%;"
+                
+            formatted.append(f"{prefix}<span style='{style}'>{w.text}</span>")
         
-        self.label.setText(" ".join(formatted))
+        self.label.setText("".join(formatted))

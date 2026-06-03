@@ -11,6 +11,7 @@ class Timeline(QObject):
         self._current_time_ms = 0
         self._duration_ms = 0
         self._speed = 1.0
+        self._start_offset_ms = 0
         
         # High-resolution elapsed timer to compute delta time
         self._elapsed_timer = QElapsedTimer()
@@ -28,8 +29,9 @@ class Timeline(QObject):
 
     def set_speed(self, speed: float) -> None:
         self._speed = speed
-        # If playing, restart elapsed timer to reset delta basis
+        # If playing, shift offset basis to current time before resetting timer
         if self._is_playing:
+            self._start_offset_ms = self._current_time_ms
             self._elapsed_timer.restart()
 
     def speed(self) -> float:
@@ -44,6 +46,7 @@ class Timeline(QObject):
     def play(self) -> None:
         if not self._is_playing:
             self._is_playing = True
+            self._start_offset_ms = self._current_time_ms
             self._elapsed_timer.start()
             self._timer.start()
             self.state_changed.emit(True)
@@ -52,9 +55,7 @@ class Timeline(QObject):
         if self._is_playing:
             self._is_playing = False
             self._timer.stop()
-            # Add final slice of elapsed time
-            delta = self._elapsed_timer.restart()
-            self._current_time_ms += delta
+            self._current_time_ms = self._start_offset_ms + self._elapsed_timer.elapsed()
             if self._current_time_ms > self._duration_ms:
                 self._current_time_ms = self._duration_ms
             self.state_changed.emit(False)
@@ -76,9 +77,8 @@ class Timeline(QObject):
         if not self._is_playing:
             return
         
-        # Compute real elapsed delta
-        delta = self._elapsed_timer.restart()
-        self._current_time_ms += delta
+        # Use absolute elapsed time to prevent accumulation drift
+        self._current_time_ms = self._start_offset_ms + self._elapsed_timer.elapsed()
         
         if self._current_time_ms >= self._duration_ms:
             self._current_time_ms = self._duration_ms

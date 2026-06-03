@@ -17,6 +17,8 @@ class ControlPanel(QWidget):
         
         self.setWindowTitle("Python Lyrics Player")
         self.resize(440, 130)
+        # Remove maximize button
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowMaximizeButtonHint)
         self.setStyleSheet("""
             QWidget {
                 background-color: #121212;

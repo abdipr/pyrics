@@ -83,7 +83,17 @@ class AnimationManager(QObject):
         elif theme == "inverted":
             inverted = True
         else:
-            inverted = random.random() < 0.3
+            # Smart alternation: streak based (1 to 3 of the same color)
+            if not hasattr(self, 'color_streak'):
+                self.color_streak = 0
+                self.current_inverted = random.choice([True, False])
+            
+            self.color_streak += 1
+            if self.color_streak > random.randint(1, 3):
+                self.current_inverted = not self.current_inverted
+                self.color_streak = 1
+                
+            inverted = self.current_inverted
             
         # Create lyric window
         window = LyricWindow(lyric.text, lyric.words, font_family, font_size, opacity, click_through, inverted, alignment_str, text_color, bg_color)

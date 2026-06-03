@@ -62,7 +62,7 @@ def main() -> None:
     # Initialize Core Settings and Components (config.json is kept in cwd for write access)
     config_manager = ConfigManager(config_path="config.json")
     timeline = Timeline()
-    scheduler = Scheduler(timeline)
+    scheduler = Scheduler(timeline, config_manager)
     
     # Create Control Panel
     control_panel = ControlPanel(timeline, config_manager)

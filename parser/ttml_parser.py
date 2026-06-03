@@ -7,6 +7,7 @@ class LyricWord:
     begin_ms: int
     end_ms: int
     text: str
+    is_bg: bool = False
 
 @dataclass
 class LyricLine:
@@ -83,6 +84,9 @@ def parse_ttml(file_path: str) -> List[LyricLine]:
             if tag.endswith('}p') or tag == 'p':
                 p_elements.append(elem)
 
+    # Build parent map for background vocal detection
+    parent_map = {c: p for p in root.iter() for c in p}
+
     lyrics: List[LyricLine] = []
     for p in p_elements:
         begin = p.get('begin') or p.get('{http://www.w3.org/ns/ttml}begin')
@@ -104,15 +108,35 @@ def parse_ttml(file_path: str) -> List[LyricLine]:
                     if tag.endswith('}span') or tag == 'span':
                         spans.append(child)
             
+            import re
             for span in spans:
                 w_begin = span.get('begin') or span.get('{http://www.w3.org/ns/ttml}begin')
                 w_end = span.get('end') or span.get('{http://www.w3.org/ns/ttml}end')
-                w_text = "".join(span.itertext()).strip()
-                if w_begin and w_text:
+                
+                w_text_inner = "".join(span.itertext())
+                if span.tail:
+                    w_text_inner += span.tail
+                
+                # Normalize whitespace but don't strip aggressively if it contains spaces
+                w_text_inner = re.sub(r'\s+', ' ', w_text_inner)
+                
+                # Detect background vocals via x-bg role on self or ancestors
+                is_bg = False
+                curr = span
+                while curr is not None:
+                    role = curr.get('role') or curr.get('{http://www.w3.org/ns/ttml#metadata}role') or curr.get('{http://www.w3.org/ns/ttml#styling}role')
+                    if role == 'x-bg':
+                        is_bg = True
+                        break
+                    curr = parent_map.get(curr)
+                
+                # Skip container spans that have no direct word text or are just pure whitespace when stripped
+                if w_begin and w_text_inner.strip():
                     words.append(LyricWord(
                         begin_ms=parse_time_to_ms(w_begin),
                         end_ms=parse_time_to_ms(w_end) if w_end else parse_time_to_ms(w_begin) + 500,
-                        text=w_text
+                        text=w_text_inner,
+                        is_bg=is_bg
                     ))
             
             # Fallback if no spans found

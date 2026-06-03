@@ -3,19 +3,29 @@ from typing import List
 from parser.ttml_parser import LyricLine
 from player.timeline import Timeline
 
+from config.config_manager import ConfigManager
+
 class Scheduler(QObject):
     # Signals
     spawn_lyric = pyqtSignal(LyricLine)  # Emitted when a lyric line is scheduled to start
     clear_lyrics = pyqtSignal()          # Emitted when lyrics need to be cleared (e.g. seek / stop)
 
-    def __init__(self, timeline: Timeline):
+    def __init__(self, timeline: Timeline, config: ConfigManager):
         super().__init__()
         self.timeline = timeline
+        self.config = config
         self.lyrics: List[LyricLine] = []
         self._next_index = 0
         
         # Connect timeline tick
         self.timeline.tick.connect(self._on_tick)
+
+    def get_prep_time_ms(self) -> int:
+        duration_s = self.config.get("animation_duration_s")
+        current_speed = self.timeline.speed()
+        # Time to reach lower-mid screen (giving time to read before it disappears)
+        if current_speed <= 0: current_speed = 1.0
+        return int((duration_s / 3.5) / current_speed * 1000)
 
     def set_lyrics(self, lyrics: List[LyricLine]) -> None:
         self.lyrics = lyrics
@@ -35,10 +45,11 @@ class Scheduler(QObject):
         # Clear currently active visual lyrics
         self.clear_lyrics.emit()
         
-        # Find the first lyric that begins at or after time_ms (considering early spawn offset of 3s)
+        # Find the first lyric that begins at or after time_ms (considering early spawn offset)
         self._next_index = 0
+        prep_time = self.get_prep_time_ms()
         for i, lyric in enumerate(self.lyrics):
-            if lyric.begin_ms - 3000 >= time_ms:
+            if lyric.begin_ms - prep_time >= time_ms:
                 self._next_index = i
                 break
             else:
@@ -46,10 +57,11 @@ class Scheduler(QObject):
 
     def _on_tick(self, current_time_ms: int) -> None:
         # Check if we have lyrics to process
+        prep_time = self.get_prep_time_ms()
         while self._next_index < len(self.lyrics):
             lyric = self.lyrics[self._next_index]
-            # Spawn 3 seconds ahead of the lyric begin timestamp
-            if current_time_ms >= lyric.begin_ms - 3000:
+            # Spawn dynamically ahead of the lyric begin timestamp so it hits center right on time
+            if current_time_ms >= lyric.begin_ms - prep_time:
                 # Trigger spawn
                 self.spawn_lyric.emit(lyric)
                 self._next_index += 1
