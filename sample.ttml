@@ -1,0 +1,13 @@
+<tt xmlns="http://www.w3.org/ns/ttml">
+  <body>
+    <div>
+      <p begin="00:00:01.000" end="00:00:04.000">Welcome to Floating Lyrics Visualizer</p>
+      <p begin="00:00:05.000" end="00:00:08.000">This is a modern monochrome application</p>
+      <p begin="00:00:09.000" end="00:00:12.000">Built using Python and PyQt6</p>
+      <p begin="00:00:13.000" end="00:00:16.000">Lyrics fade in and float up smoothly</p>
+      <p begin="00:00:17.000" end="00:00:20.000">And alternate left and right sides of the screen</p>
+      <p begin="00:00:21.000" end="00:00:24.000">With support for smart stacking to prevent overlap</p>
+      <p begin="00:00:25.000" end="00:00:28.000">Enjoy the visualization!</p>
+    </div>
+  </body>
+</tt>
