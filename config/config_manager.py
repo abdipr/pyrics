@@ -7,7 +7,7 @@ DEFAULT_CONFIG = {
     "font_family": "Arial Narrow",
     "font_size": 32,
     "window_opacity": 1.0,
-    "animation_duration_s": 30.0,
+    "animation_duration_s": 12.0,
     "side_spacing": 80,
     "random_offset_range": 50,
     "playback_speed": 1.0,

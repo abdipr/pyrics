@@ -35,6 +35,14 @@ def load_custom_fonts() -> None:
                 print(f"Failed to load font: {filename}")
 
 def main() -> None:
+    # Explicitly set AppUserModelID on Windows for the taskbar icon to show up correctly
+    try:
+        import ctypes
+        myappid = 'abdipr.pyrics.lyricplayer.1.0'
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    except Exception:
+        pass
+        
     app = QApplication(sys.argv)
     
     # Set application metadata

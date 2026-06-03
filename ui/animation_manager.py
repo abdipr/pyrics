@@ -240,7 +240,7 @@ class AnimationManager(QObject):
             rgba_val = f"rgba({color.red()}, {color.green()}, {color.blue()}, {int(opacity * 100)}%)"
             window.frame.setStyleSheet(f"QFrame {{ background-color: {rgba_val}; border-radius: 0px; }}")
             
-            font = QFont(font_family, font_size)
+            font = QFont(font_family, int(font_size))
             window.label.setFont(font)
             
             align_flag = Qt.AlignmentFlag.AlignCenter

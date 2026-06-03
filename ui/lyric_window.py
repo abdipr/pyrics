@@ -63,7 +63,7 @@ class LyricWindow(QWidget):
         self.label.setStyleSheet("background: transparent;")
         
         # Apply font
-        font = QFont(self.font_family, self.font_size)
+        font = QFont(self.font_family, int(self.font_size))
         self.label.setFont(font)
         
         frame_layout.addWidget(self.label)
@@ -79,7 +79,7 @@ class LyricWindow(QWidget):
 
     def adjust_size_to_text(self) -> None:
         # Calculate dynamic size up to 420px max width to keep it compact and fill 4:3 vertical space
-        font = QFont(self.font_family, self.font_size)
+        font = QFont(self.font_family, int(self.font_size))
         metrics = self.label.fontMetrics()
         
         # Get width of single line of text plus padding

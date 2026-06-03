@@ -54,7 +54,7 @@ class Timeline(QObject):
             self._timer.stop()
             # Add final slice of elapsed time
             delta = self._elapsed_timer.restart()
-            self._current_time_ms += delta * self._speed
+            self._current_time_ms += delta
             if self._current_time_ms > self._duration_ms:
                 self._current_time_ms = self._duration_ms
             self.state_changed.emit(False)
@@ -78,7 +78,7 @@ class Timeline(QObject):
         
         # Compute real elapsed delta
         delta = self._elapsed_timer.restart()
-        self._current_time_ms += delta * self._speed
+        self._current_time_ms += delta
         
         if self._current_time_ms >= self._duration_ms:
             self._current_time_ms = self._duration_ms

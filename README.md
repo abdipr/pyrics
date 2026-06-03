@@ -8,6 +8,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/abdipr/pyrics/releases/latest/download/pyrics.exe">
+    <img src="https://img.shields.io/badge/Download_Latest-pyrics.exe-blue?style=for-the-badge&logo=windows" alt="Download pyrics.exe" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/abdipr/pyrics/stargazers"><img src="https://img.shields.io/github/stars/abdipr/pyrics?style=flat-square&color=black" alt="Stars" /></a>
   <a href="https://github.com/abdipr/pyrics/network/members"><img src="https://img.shields.io/github/forks/abdipr/pyrics?style=flat-square&color=black" alt="Forks" /></a>
   <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python Version">

@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Executable
         run: |
-          pyinstaller --noconsole --onefile --icon=favicon/favicon.ico --add-data "favicon;favicon" --name pyrics main.py
+          pyinstaller --noconsole --onefile --icon=favicon/favicon.ico --add-data "favicon;favicon" --version-file=version.txt --name pyrics main.py
 
       - name: Release and Upload Asset
         uses: softprops/action-gh-release@v2
